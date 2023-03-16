@@ -17,7 +17,7 @@ const HomeScreen = ({ navigation }) => {
   const [schedule, setSchedule] = useState("default");
 
   const [todayTaskItems, setTodayTaskItems] = useState([]);
-  const [tomorrowTaskItems, setTomorrowTaskItems] = useState([]);
+  const [tomorrowTaskItems, setTomorrowTaskItems] = useState([])
   const [nextWeekTaskItems, setNextWeekTaskItems] = useState([]);
 
 
@@ -496,9 +496,8 @@ const HomeScreen = ({ navigation }) => {
   //#endregion
 
 
-  const updateTaskItems = (taskId, newTaskName, subtaskItemArray, subtaskItemStatusArray) => {
-    console.log("success");
-    const docRef = db.collection("Tasks").doc(userID).collection('TodayTasks').doc("task" + taskId);
+  const updateTaskItems = (taskId, newTaskName, subtaskItemArray, subtaskItemStatusArray, scheduleCollection) => {
+    const docRef = db.collection("Tasks").doc(userID).collection(scheduleCollection).doc("task" + taskId);
 
     docRef.update({
       taskName: newTaskName,

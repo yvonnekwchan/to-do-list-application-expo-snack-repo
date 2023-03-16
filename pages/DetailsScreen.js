@@ -98,7 +98,7 @@ const DetailsScreen = ({ route, navigation }) => {
                 route.params.setTaskItems(todayTaskItemsCopy);
 
                 //Update Task Name in Firestore
-                route.params.updateTaskItems(route.params.taskItems[route.params.index].id, task, subtaskItems, subtaskItemsStatus);
+                route.params.updateTaskItems(route.params.taskItems[route.params.index].id, task, subtaskItems, subtaskItemsStatus, "TodayTasks");
             }
 
             if (route.params.pageToNavigate == "TOMORROW") {
@@ -117,13 +117,30 @@ const DetailsScreen = ({ route, navigation }) => {
 
                 //Update the task array
                 route.params.setTaskItems(tomorrowTaskItemsCopy);
+                
+                //Update Task Name in Firestore
+                route.params.updateTaskItems(route.params.taskItems[route.params.index].id, task, subtaskItems, subtaskItemsStatus, "TomorrowTasks");
             }
 
-            if (route.params.pageToNavigate == "UPCOMING") {
-                route.params.setNextWeekTaskItems([...route.params.nextWeekTaskItems, task])
-                route.params.setNextWeekTaskStatus([...route.params.nextWeekTaskStatus, "pending"])
-                route.params.setNextWeekTaskSchedules([...route.params.nextWeekTaskSchedules, route.params.nextWeek])
-            }
+           if (route.params.pageToNavigate == "UPCOMING") {
+                let nextWeekTaskItemsCopy = [...route.params.taskItems];
+
+                //Edit Task Name
+                nextWeekTaskItemsCopy[route.params.index].taskName = task;
+
+                //Edit Subtask Items
+                nextWeekTaskItemsCopy[route.params.index].subtasks.subtaskItems = [...subtaskItems];
+                console.log("Subtask array of the current task: " + nextWeekTaskItemsCopy[route.params.index].subtasks.subtaskItems)
+
+                //Edit Subtask Note
+                nextWeekTaskItemsCopy[route.params.index].note = note;
+
+                //Update the task array
+                route.params.setTaskItems(nextWeekTaskItemsCopy);
+                
+                //Update Task Name in Firestore
+                route.params.updateTaskItems(route.params.taskItems[route.params.index].id, task, subtaskItems, subtaskItemsStatus, "NextWeekTasks");
+            } 
 
             //setSchedule("default");
             setTask(null);
