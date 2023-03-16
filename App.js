@@ -11,7 +11,6 @@ import * as WebBrowser from "expo-web-browser";
 import * as Google from "expo-auth-session/providers/google";
 
 import HomeScreen from './pages/HomeScreen';
-import LoginScreen from './pages/LoginScreen';
 import AddTaskScreen from './pages/AddTaskScreen';
 import DetailsScreen from './pages/DetailsScreen';
 import ProfileScreen from './pages/ProfileScreen';
