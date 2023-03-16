@@ -110,6 +110,7 @@ const DetailsScreen = ({ route, navigation }) => {
 
                 //Edit Subtask Items
                 tomorrowTaskItemsCopy[route.params.index].subtasks.subtaskItems = [...subtaskItems];
+                tomorrowTaskItemsCopy[route.params.index].subtasks.subtaskItemsStatus = [...subtaskItemsStatus];
                 console.log("Subtask array of the current task: " + tomorrowTaskItemsCopy[route.params.index].subtasks.subtaskItems)
 
                 //Edit Subtask Note
@@ -130,6 +131,7 @@ const DetailsScreen = ({ route, navigation }) => {
 
                 //Edit Subtask Items
                 nextWeekTaskItemsCopy[route.params.index].subtasks.subtaskItems = [...subtaskItems];
+                nextWeekTaskItemsCopy[route.params.index].subtasks.subtaskItemsStatus = [...subtaskItemsStatus];
                 console.log("Subtask array of the current task: " + nextWeekTaskItemsCopy[route.params.index].subtasks.subtaskItems)
 
                 //Edit Subtask Note
