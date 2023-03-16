@@ -27,7 +27,7 @@ const HomeScreen = ({ navigation }) => {
   ]);
 
 
-  // MARK: Handle Collapsible Section List
+  //#region - Handle Collapsible Section List
   const [collapsed, setCollapsed] = useState(false);
   const [tomorrowItemsCollapsed, setTomorrowItemsCollapsed] = useState(false);
   const [nextWeekItemsCollapsed, setNextWeekItemsCollapsed] = useState(false);
@@ -74,9 +74,10 @@ const HomeScreen = ({ navigation }) => {
       }
     }
   }
+//#endregion
 
 
-  // MARK: Handle Set Custome Schedule
+  //#region - Handle Set Custome Schedule
   const [keyboardStatus, setKeyboardStatus] = useState("hide");
 
   /*Date Time Picker*/
@@ -151,9 +152,10 @@ const HomeScreen = ({ navigation }) => {
       handleOpenModalPress();
     }
   });
+  //#endregion
 
 
-  // MARK: Handle Set Defined Schedule
+  //#region - Handle Set Defined Schedule
   const today = new Date();
   const laterToday = new Date(today.getFullYear(), today.getMonth(), today.getDate(), today.getHours() + 4, 0).toLocaleString();
   const thisEvening = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 18, 0).toLocaleString();
@@ -194,9 +196,10 @@ const HomeScreen = ({ navigation }) => {
       setSchedule("default");
     }
   }
+  //#endregion
 
 
-  // MARK: Loading Docs from Firestore
+  //#region - Loading Docs from Firestore
   const userID = "my_device_2"
   /*Load Today Tasks*/
   useEffect(() => {
@@ -236,9 +239,98 @@ const HomeScreen = ({ navigation }) => {
         setNextWeekTaskItems(tasks)
       })
   }, []);
+  //#endregion
 
 
-  // MARK: Creating New Doc 
+ //#region - Handle Add Task
+ const handleAddTask = () => {
+  if (task != "" && task != null) {
+    /*Update todayTaskItems array*/
+    if (schedule == laterToday || schedule == thisEvening || schedule == "default") {
+      const id = todayTaskItems.length + 1;
+      const newTask = {
+        id: id,
+        taskName: task,
+        status: "pending",
+        schedule: schedule,
+        subtasks: {
+          subtaskItems: [],
+          subtaskItemsStatus: []
+        },
+        note: "",
+        creationTimestamp: new Date(),
+        lastUpdatedTimestamp: new Date()
+      }
+
+      const newTodayTaskItemsArray = [
+        newTask,
+        ...todayTaskItems
+      ];
+      setTodayTaskItems(newTodayTaskItemsArray);
+
+      CreateTodayTask(newTask, id);
+    }
+
+    /*Update tomorrowTaskItems array*/
+    if (schedule == tomorrow) {
+      const id = tomorrowTaskItems.length + 1;
+      const newTask = {
+        id: id,
+        taskName: task,
+        status: "pending",
+        schedule: schedule,
+        subtasks: {
+          subtaskItems: [],
+          subtaskItemsStatus: []
+        },
+        note: "",
+        creationTimestamp: new Date(),
+        lastUpdatedTimestamp: new Date()
+      }
+
+      const newTomorrowTaskItemsArray = [
+        newTask,
+        ...tomorrowTaskItems
+      ];
+      setTomorrowTaskItems(newTomorrowTaskItemsArray);
+
+      CreateTomorrowTask(newTask, id);
+    }
+
+    /*Update nextWeekTaskItems array*/
+    if (schedule == nextWeek) {
+      const id = nextWeekTaskItems.length + 1;
+      const newTask = {
+        id: id,
+        taskName: task,
+        status: "pending",
+        schedule: schedule,
+        subtasks: {
+          subtaskItems: [],
+          subtaskItemsStatus: []
+        },
+        note: "",
+        creationTimestamp: new Date(),
+        lastUpdatedTimestamp: new Date()
+      }
+
+      const newNextWeekTaskItemsArray = [
+        newTask,
+        ...nextWeekTaskItems
+      ];
+      setNextWeekTaskItems(newNextWeekTaskItemsArray);
+
+      CreateNextWeekTask(newTask, id);
+    }
+
+    setSchedule("default");
+    setTask(null);
+  }
+}
+//#endregion
+
+
+  //#region - Creating New Doc in Firestore
   const CreateTodayTask = (docData, taskId) => {
     /*Create New Doc for Today Task*/
     db.collection("Tasks").doc(userID).set({
@@ -265,102 +357,18 @@ const HomeScreen = ({ navigation }) => {
       db.collection("Tasks").doc(userID).collection('NextWeekTasks').doc("task" + taskId).set(docData)
     })
   }
-
-  // MARK: Handle Add Task
-  const handleAddTask = () => {
-    if (task != "" && task != null) {
-      /*Update todayTaskItems array*/
-      if (schedule == laterToday || schedule == thisEvening || schedule == "default") {
-        const id = todayTaskItems.length + 1;
-        const newTask = {
-          id: id,
-          taskName: task,
-          status: "pending",
-          schedule: schedule,
-          subtasks: {
-            subtaskItems: [],
-            subtaskItemsStatus: []
-          },
-          note: "",
-          creationTimestamp: new Date(),
-          lastUpdatedTimestamp: new Date()
-        }
-
-        const newTodayTaskItemsArray = [
-          newTask,
-          ...todayTaskItems
-        ];
-        setTodayTaskItems(newTodayTaskItemsArray);
-
-        CreateTodayTask(newTask, id);
-      }
-
-      /*Update tomorrowTaskItems array*/
-      if (schedule == tomorrow) {
-        const id = tomorrowTaskItems.length + 1;
-        const newTask = {
-          id: id,
-          taskName: task,
-          status: "pending",
-          schedule: schedule,
-          subtasks: {
-            subtaskItems: [],
-            subtaskItemsStatus: []
-          },
-          note: "",
-          creationTimestamp: new Date(),
-          lastUpdatedTimestamp: new Date()
-        }
-
-        const newTomorrowTaskItemsArray = [
-          newTask,
-          ...tomorrowTaskItems
-        ];
-        setTomorrowTaskItems(newTomorrowTaskItemsArray);
-
-        CreateTomorrowTask(newTask, id);
-      }
-
-      /*Update nextWeekTaskItems array*/
-      if (schedule == nextWeek) {
-        const id = nextWeekTaskItems.length + 1;
-        const newTask = {
-          id: id,
-          taskName: task,
-          status: "pending",
-          schedule: schedule,
-          subtasks: {
-            subtaskItems: [],
-            subtaskItemsStatus: []
-          },
-          note: "",
-          creationTimestamp: new Date(),
-          lastUpdatedTimestamp: new Date()
-        }
-
-        const newNextWeekTaskItemsArray = [
-          newTask,
-          ...nextWeekTaskItems
-        ];
-        setNextWeekTaskItems(newNextWeekTaskItemsArray);
-
-        CreateNextWeekTask(newTask, id);
-      }
-
-      setSchedule("default");
-      setTask(null);
-    }
-  }
+  //#endregion
 
 
-  // MARK: Handle Complete Task
+  //#region - Handle Complete Task
   const completeTask = (taskId, schedule) => {
+          //Today
     if (schedule == laterToday || schedule == thisEvening || schedule == "default") {
       const index = todayTaskItems.findIndex(task => task.id == taskId);
       const docRef = db.collection("Tasks").doc(userID).collection('TodayTasks').doc("task" + taskId);
 
-      //Today
       let todayTaskItemsCopy = [...todayTaskItems];
+       //Update Firestore
       if (todayTaskItemsCopy[index].status == "completed") {
         todayTaskItemsCopy[index].status = "pending"
 
@@ -377,6 +385,8 @@ const HomeScreen = ({ navigation }) => {
           lastUpdatedTimestamp: new Date()
         })
       }
+
+      //Update local copy
       setTodayTaskItems(todayTaskItemsCopy);
     }
 
@@ -386,6 +396,7 @@ const HomeScreen = ({ navigation }) => {
       const docRef = db.collection("Tasks").doc(userID).collection('TomorrowTasks').doc("task" + taskId);
 
       let tomorrowTaskItemsCopy = [...tomorrowTaskItems];
+       //Update Firestore
       if (tomorrowTaskItemsCopy[index].status == "completed") {
         tomorrowTaskItemsCopy[index].status = "pending"
 
@@ -402,6 +413,8 @@ const HomeScreen = ({ navigation }) => {
           lastUpdatedTimestamp: new Date()
         })
       }
+
+      //Update local copy
       setTomorrowTaskItems(tomorrowTaskItemsCopy);
     }
 
@@ -411,6 +424,7 @@ const HomeScreen = ({ navigation }) => {
       const docRef = db.collection("Tasks").doc(userID).collection('NextWeekTasks').doc("task" + taskId);
 
       let nextWeekTaskItemsCopy = [...nextWeekTaskItems];
+       //Update Firestore
       if (nextWeekTaskItemsCopy[index].status == "completed") {
         nextWeekTaskItemsCopy[index].status = "pending"
 
@@ -427,20 +441,25 @@ const HomeScreen = ({ navigation }) => {
           lastUpdatedTimestamp: new Date()
         })
       }
+
+      //Update local copy
       setNextWeekTaskItems(nextWeekTaskItemsCopy);
     }
   }
+  //#endregion
 
 
-  // MARK: Handle Delete Task
+  //#region - Handle Delete Task
   const deleteTask = (taskId, schedule) => {
     //Today
     if (schedule == laterToday || schedule == thisEvening || schedule == "default") {
+      //Update Firestore
       const index = todayTaskItems.findIndex(task => task.id == taskId);
       const docRef = db.collection("Tasks").doc(userID).collection('TodayTasks').doc("task" + taskId);
 
       docRef.delete();
 
+      //Update local copy
       let todayTaskItemsCopy = [...todayTaskItems]
       todayTaskItemsCopy.splice(index, 1);
       setTodayTaskItems(todayTaskItemsCopy);
@@ -448,11 +467,13 @@ const HomeScreen = ({ navigation }) => {
 
     //Tomorrow
     if (schedule == tomorrow) {
+      //Update Firestore
       const index = tomorrowTaskItems.findIndex(task => task.id == taskId);
       const docRef = db.collection("Tasks").doc(userID).collection('TomorrowTasks').doc("task" + taskId);
 
       docRef.delete();
 
+      //Update local copy
       let tomorrowTaskItemsCopy = [...tomorrowTaskItems]
       tomorrowTaskItemsCopy.splice(index, 1);
       setTomorrowTaskItems(tomorrowTaskItemsCopy);
@@ -460,15 +481,32 @@ const HomeScreen = ({ navigation }) => {
 
     //Next Week 
     if (schedule == nextWeek) {
+      //Update Firestore
       const index = nextWeekTaskItems.findIndex(task => task.id == taskId);
       const docRef = db.collection("Tasks").doc(userID).collection('NextWeekTasks').doc("task" + taskId);
 
       docRef.delete();
 
+      //Update local copy
       let nextWeekItemsCopy = [...nextWeekTaskItems];
       nextWeekItemsCopy.splice(index, 1);
       setNextWeekTaskItems(nextWeekItemsCopy);
     }
+  }
+  //#endregion
+
+
+  const updateTaskItems = (taskId, newTaskName, subtaskItemArray, subtaskItemStatusArray) => {
+    console.log("success");
+    const docRef = db.collection("Tasks").doc(userID).collection('TodayTasks').doc("task" + taskId);
+
+    docRef.update({
+      taskName: newTaskName,
+      subtasks: {
+        subtaskItems: subtaskItemArray,
+        subtaskItemsStatus: subtaskItemStatusArray
+      },
+    })
   }
 
   return (
@@ -498,6 +536,7 @@ const HomeScreen = ({ navigation }) => {
                       index: index,
                       taskItems: section.title == "TODAY" ? todayTaskItems : section.title == "TOMORROW" ? tomorrowTaskItems : nextWeekTaskItems,
                       setTaskItems: section.title == "TODAY" ? setTodayTaskItems : section.title == "TOMORROW" ? setTomorrowTaskItems : setNextWeekTaskItems,
+                      updateTaskItems: updateTaskItems,
                     })
                 }}>
                   <Task text={item.taskName} status={item.status} schedule={getDisplayText(item.schedule)} onPressSquare={() => completeTask(item.id, item.schedule)} onPressCircular={() => deleteTask(item.id, item.schedule)} />

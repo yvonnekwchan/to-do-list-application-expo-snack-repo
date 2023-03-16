@@ -32,11 +32,11 @@ const DetailsScreen = ({ route, navigation }) => {
         subtaskItemsCopy[index] = input;
         setSubtaskItems(subtaskItemsCopy);
         setAddTaskShowUp(true);
-      }
-    
-      useEffect(() => {
+    }
+
+    useEffect(() => {
         console.log("subtaskItems array " + subtaskItems);
-      }, [subtaskItems])
+    }, [subtaskItems])
 
     const updateSubtaskStatus = (isCompleted, index) => {
         let subtaskItemsStatusCopy = [...subtaskItemsStatus];
@@ -81,7 +81,6 @@ const DetailsScreen = ({ route, navigation }) => {
 
             if (route.params.pageToNavigate == "TODAY") {
 
-
                 let todayTaskItemsCopy = [...route.params.taskItems];
 
                 //Edit Task Name
@@ -95,8 +94,11 @@ const DetailsScreen = ({ route, navigation }) => {
                 //Edit Subtask Note
                 todayTaskItemsCopy[route.params.index].note = note;
 
-                //Update the task array
+                //Update the task array in local copy
                 route.params.setTaskItems(todayTaskItemsCopy);
+
+                //Update Task Name in Firestore
+                route.params.updateTaskItems(route.params.taskItems[route.params.index].id, task, subtaskItems, subtaskItemsStatus);
             }
 
             if (route.params.pageToNavigate == "TOMORROW") {
@@ -151,7 +153,7 @@ const DetailsScreen = ({ route, navigation }) => {
                                         forceUpdateCount={forceUpdate} forceUpdate={() => { setForceUpdate(forceUpdate => forceUpdate + 1); }}
                                         numOfSubtasks={subtaskItems.length}
                                         updateSubtaskItemsArray={updateSubtaskItemsArray} addSubtask={addSubtask}
-                                        removeInputField={removeInputField} updateSubtaskStatus={updateSubtaskStatus} deleteSubtask={deleteSubtask}/>
+                                        removeInputField={removeInputField} updateSubtaskStatus={updateSubtaskStatus} deleteSubtask={deleteSubtask} />
                                 </View>
                             )
                         })
