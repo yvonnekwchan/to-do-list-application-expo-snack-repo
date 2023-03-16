@@ -10,7 +10,7 @@
     "eject": "expo eject"
   },
   "dependencies": {
-    "@babel/runtime": "^7.20.13",
+    "@babel/runtime": "^7.21.0",
     "@babel/runtime-corejs2": "^7.19.2",
     "@expo/vector-icons": "^13.0.0",
     "@react-native-community/datetimepicker": "6.2.0",
