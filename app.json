@@ -2,6 +2,7 @@
   "expo": {
     "name": "Todo-List-Application",
     "slug": "Todo-List-Application",
+    "scheme": "yourscheme",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -21,6 +22,7 @@
       "supportsTablet": true
     },
     "android": {
+      "package": "com.yvonnekwchan.app",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
@@ -28,6 +30,11 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "dc8ba40f-61e6-43c9-b130-19c9a12cda4c"
+      }
     }
   }
 }
