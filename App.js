@@ -4,7 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import 'react-native-gesture-handler';
-import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Button, StyleSheet, Text, TextInput, View, Pressable, Image } from 'react-native';
 
 import { useEffect, useState, createContext, useContext } from "react";
 import * as WebBrowser from "expo-web-browser";
@@ -19,7 +19,8 @@ import SettingsScreen from './pages/SettingsScreen';
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
-function HomeTabs() {
+function HomeTabs({ route }) {
+  const { username, userId, userEmail } = route.params;
   return (
     <Tab.Navigator
       screenOptions={
@@ -44,6 +45,7 @@ function HomeTabs() {
         name="Tasks"
         component={HomeScreen}
         options={{ title: 'Tasks', headerShown: false }}
+        initialParams={{ username: username, userId: userId, userEmail: userEmail }}
       />
       <Tab.Screen
         name="Settings"
@@ -58,9 +60,7 @@ WebBrowser.maybeCompleteAuthSession();
 
 export default function App() {
 
-  //#region Google Authentication
-  const AuthContext = createContext();
-  
+  //#region Google Authentication 
   const [token, setToken] = useState("");
   const [userInfo, setUserInfo] = useState(null);
 
@@ -94,53 +94,57 @@ export default function App() {
   //#endregion
 
   return (
-      <NavigationContainer>
-        {userInfo === null ? (
-           <View style={styles.container}>
-           <Button
-               title="Sign in with Google"
-               disabled={!request}
-               onPress={() => {
-                   promptAsync();
-               }}
-           />
-       </View>
-        ) : (
-          <Stack.Navigator
-            initialRouteName="Feed"
-          >
-            <Stack.Screen
-              name="Home"
-              component={HomeTabs}
-              options={{
-                headerShown: false,
-                tabBarLabel: 'Tasks',
-              }}
-            />
-            <Stack.Screen
-              name="AddTask"
-              component={AddTaskScreen}
-              options={{
-                presentation: 'modal', title: 'Add Task', headerShown: false
-              }}
-            />
-            <Stack.Screen
-              name="Details"
-              component={DetailsScreen}
-              options={{
-                presentation: 'modal', title: 'Details Page', headerShown: false
-              }}
-            />
-            <Stack.Screen
-              name="Profile"
-              component={ProfileScreen}
-              options={{
-                title: 'Profile Page'
-              }}
-            />
-          </Stack.Navigator>
-        )}
-      </NavigationContainer>
+    <NavigationContainer>
+      {userInfo != null && userInfo.name != null ? (
+        <Stack.Navigator
+          initialRouteName="Feed"
+        >
+          <Stack.Screen
+            name="Home"
+            component={HomeTabs}
+            options={{
+              headerShown: false,
+              tabBarLabel: 'Tasks',
+            }}
+            initialParams={{ username: userInfo.name, userId: userInfo.id, userEmail: userInfo.email }}
+          />
+          <Stack.Screen
+            name="AddTask"
+            component={AddTaskScreen}
+            options={{
+              presentation: 'modal', title: 'Add Task', headerShown: false
+            }}
+          />
+          <Stack.Screen
+            name="Details"
+            component={DetailsScreen}
+            options={{
+              presentation: 'modal', title: 'Details Page', headerShown: false
+            }}
+          />
+          <Stack.Screen
+            name="Profile"
+            component={ProfileScreen}
+            options={{
+              title: 'Profile Page'
+            }}
+          />
+        </Stack.Navigator>
+      ) : (
+        <View style={styles.container}>
+            <Image style={styles.appLogo} source={require('./assets/signing-screen-logo.png')} />
+          <Pressable style={styles.button} disabled={!request} onPress={() => {
+            promptAsync();
+          }}>
+            <Image style={styles.logo} source={require('./assets/google-logo.png')} />
+            <View style={styles.textContainer}>
+              <Text style={styles.text}>Sign in with Google</Text>
+            </View>
+          </Pressable>
+          <Text style={styles.declaration}>By signing up, you agree to our Terms of Service and Privacy Policy</Text>
+        </View>
+      )}
+    </NavigationContainer>
   );
 }
 
@@ -152,7 +156,36 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   text: {
-    fontSize: 20,
+    fontSize: 16,
     fontWeight: "bold",
+    color: "#444"
   },
+  button: {
+    flexDirection: "row",
+    alignItems: 'center',
+    borderColor: "rgb(220,220,220)",
+    borderWidth: 1,
+    borderRadius: 6,
+    width: '90%',
+    paddingVertical: 12,
+    paddingHorizontal: 10
+  },
+  appLogo: {
+    width: 180,
+    height: 180,
+    marginBottom: 200
+  },
+  logo: {
+    width: 24,
+    height: 24,
+  },
+  textContainer: {
+    paddingHorizontal: 80,
+    justifyContent: 'center',
+  },
+  declaration: {
+    fontSize: 10,
+    color: "#444",
+    marginTop: 10
+  }
 });

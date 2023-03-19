@@ -10,7 +10,11 @@ import Collapsible from 'react-native-collapsible';
 
 import { db } from '../firebase'
 
-const HomeScreen = ({ navigation }) => {
+const HomeScreen = ({ navigation, route }) => {
+  const userID = route.params.userId;
+  const username = route.params.username;
+  const userEmail = route.params.userEmail;
+
   const [forceUpdate, setForceUpdate] = useState(0);
 
   const [task, setTask] = useState();
@@ -24,6 +28,7 @@ const HomeScreen = ({ navigation }) => {
   // MARK: Ignore Warning
   LogBox.ignoreLogs([
     'Non-serializable values were found in the navigation state',
+    'componentWillMount has been renamed, and is not recommended for use'
   ]);
 
 
@@ -200,7 +205,6 @@ const HomeScreen = ({ navigation }) => {
 
 
   //#region - Loading Docs from Firestore
-  const userID = "my_device_2"
   /*Load Today Tasks*/
   useEffect(() => {
     db.collection("Tasks").doc(userID).collection('TodayTasks')
@@ -334,7 +338,8 @@ const HomeScreen = ({ navigation }) => {
   const CreateTodayTask = (docData, taskId) => {
     /*Create New Doc for Today Task*/
     db.collection("Tasks").doc(userID).set({
-      username: 'Yvonne Chan'
+      username: username, 
+      email: userEmail
     }).then(() => {
       db.collection("Tasks").doc(userID).collection('TodayTasks').doc("task" + taskId).set(docData)
     })
@@ -343,7 +348,7 @@ const HomeScreen = ({ navigation }) => {
   const CreateTomorrowTask = (docData, taskId) => {
     /*Create New Doc for Tomorrow Task*/
     db.collection("Tasks").doc(userID).set({
-      username: 'Yvonne Chan'
+      username: username
     }).then(() => {
       db.collection("Tasks").doc(userID).collection('TomorrowTasks').doc("task" + taskId).set(docData)
     })
@@ -352,7 +357,7 @@ const HomeScreen = ({ navigation }) => {
   const CreateNextWeekTask = (docData, taskId) => {
     /*Create New Doc for Next Week Task*/
     db.collection("Tasks").doc(userID).set({
-      username: 'Yvonne Chan'
+      username: username
     }).then(() => {
       db.collection("Tasks").doc(userID).collection('NextWeekTasks').doc("task" + taskId).set(docData)
     })
